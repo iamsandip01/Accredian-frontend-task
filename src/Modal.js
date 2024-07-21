@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 const Modal = ({ isOpen, onClose }) => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     referrerName: ' ',
     referrerMail: ' ',
@@ -30,13 +31,16 @@ const Modal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:4000/referrals', {
+      const response = await fetch('https://accredian-backend-task-u66t.onrender.com/referrals', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData),
       });
+      setTimeout(() => {
+        setIsSubmitted(true);
+      }, 1000);
       const result = await response.json();
 
       if (!response.ok) {
@@ -54,7 +58,10 @@ const Modal = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-4 rounded shadow-lg">
-        <h2 className="text-xl mb-4">Refer Form</h2>
+      <div>
+      {isSubmitted ? (
+        <div className="text-black">Thank you for your submission!</div>
+      ) : (
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Referrer Name:</label>
@@ -104,6 +111,8 @@ const Modal = ({ isOpen, onClose }) => {
             Submit
           </button>
         </form>
+        )}
+        </div>
         <button onClick={onClose} className="mt-4 text-red-500">
           Close
         </button>
